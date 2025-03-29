@@ -1,0 +1,8 @@
+# Natural language queries for benchmarking
+# Format: One query per line
+
+information retrieval systems
+machine learning applications
+cloud computing architectures
+neural networks in nlp
+distributed systems design 
