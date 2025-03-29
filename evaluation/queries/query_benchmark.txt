@@ -1,0 +1,8 @@
+# Structured queries for benchmarking
+# Format: One query per line
+
+title:information AND (abstract:retrieval OR content:systems)
+title:machine AND abstract:learning AND content:applications
+title:cloud AND (abstract:computing OR content:architectures)
+(title:neural OR abstract:networks) AND content:nlp
+title:distributed AND abstract:systems AND content:design 
