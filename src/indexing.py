@@ -59,19 +59,36 @@ class FileSystemDocumentLoader(DocumentLoader):
     
     def load_document(self, filename: str) -> Optional[IndexableDocument]:
         """
-        Load a document from the filesystem
+        Load document from the filesystem (index tokens only)
         """
         try:
+            if filename.endswith('_tokens.txt'):
+                return None
+                
             title = filename[:-4] if filename.endswith('.txt') else filename
-            file_path = os.path.join(self.src_folder, filename)
-
-            with open(file_path, 'r', encoding='utf-8') as f:
+            
+            abstract_path = os.path.join(self.src_folder, filename)
+            
+            tokens_filename = f"{title}_tokens.txt"
+            tokens_path = os.path.join(self.src_folder, tokens_filename)
+            
+            if not os.path.exists(tokens_path):
+                logger.debug(f"Skipping {title}: No tokens file found")
+                return None
+            
+            abstract = ""
+            if os.path.exists(abstract_path):
+                with open(abstract_path, 'r', encoding='utf-8') as f:
+                    abstract = f.read()
+            
+            with open(tokens_path, 'r', encoding='utf-8') as f:
                 content = f.read()
+            content = ' '.join(content.split('\n'))
 
             return IndexableDocument(
                 title=title,
                 content=content,
-                abstract=content
+                abstract=abstract
             )
 
         except FileNotFoundError as e:
@@ -255,6 +272,7 @@ def get_index_stats() -> Dict[str, float]:
 def build_index(progress_callback: Optional[Callable[[int], None]] = None) -> None:
     """
     Build the search index from processed documents
+    
     Args:
         progress_callback: Optional callback for progress
     """

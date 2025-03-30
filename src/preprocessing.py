@@ -187,6 +187,7 @@ class PDFDocumentProcessor(BaseDocumentProcessor):
         for i, f_name in enumerate(files):
             if doc := self.process_single_document(f_name):
                 processed_docs.append(doc)
+                self._save_tokens(doc)
             
             if progress_callback:
                 progress = int((i + 1) / total_files * 100)
@@ -206,7 +207,8 @@ class PDFDocumentProcessor(BaseDocumentProcessor):
             
             tokens = self.text_processor.process_text(raw_text)
             
-            doc = ProcessedDocument(title=filename, tokens=tokens, raw_text=raw_text)
+            title = os.path.splitext(filename)[0]
+            doc = ProcessedDocument(title=title, tokens=tokens, raw_text=raw_text)
             
             if self.disambiguator:
                 doc.disambiguated_terms = self.disambiguator.disambiguate(tokens)
@@ -224,6 +226,19 @@ class PDFDocumentProcessor(BaseDocumentProcessor):
         with open(filepath, "rb") as f:
             pdf = pdftotext.PDF(f)
         return "\n\n".join(pdf)
+    
+    def _save_tokens(self, doc: ProcessedDocument) -> None:
+        """
+        Save processed tokens
+        """
+        tokens_file = os.path.join(self.dst_folder, f"{doc.title}_tokens.txt")
+        
+        try:
+            with open(tokens_file, 'w', encoding='utf-8') as f:
+                f.write('\n'.join(doc.tokens))
+            logger.debug(f"Saved tokens to {tokens_file}")
+        except Exception as e:
+            logger.error(f"Error saving tokens for {doc.title}: {e}")
 
 def preprocess_papers(progress_callback: Optional[Callable[[int], None]] = None) -> None:
     """
