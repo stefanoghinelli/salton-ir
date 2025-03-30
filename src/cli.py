@@ -57,9 +57,9 @@ def fetch(limit: int):
         
         print_header("Fetching Papers")
         
-        with click.progressbar(length=limit, label='Fetching papers') as bar:
-            def progress_callback(current):
-                bar.update(current)
+        with click.progressbar(length=100, label='Fetching papers') as bar:
+            def progress_callback(percent):
+                bar.update(percent - bar.pos)
             
             scrape_papers(limit, progress_callback)
             
@@ -70,7 +70,8 @@ def fetch(limit: int):
         click.echo(f"\nError fetching papers: {str(e)}")
 
 @cli.command()
-def preprocess():
+@click.option('--wsd', is_flag=True, help='Enable Word Sense Disambiguation')
+def preprocess(wsd):
     """
     Preprocess fetched papers
     """
@@ -83,7 +84,7 @@ def preprocess():
             def progress_callback(percent):
                 bar.update(percent - bar.pos)
             
-            preprocess_papers(progress_callback)
+            preprocess_papers(progress_callback, use_disambiguation=wsd)
             
     except Exception as e:
         click.echo(f"\nError preprocessing papers: {str(e)}")

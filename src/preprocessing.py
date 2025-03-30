@@ -240,18 +240,19 @@ class PDFDocumentProcessor(BaseDocumentProcessor):
         except Exception as e:
             logger.error(f"Error saving tokens for {doc.title}: {e}")
 
-def preprocess_papers(progress_callback: Optional[Callable[[int], None]] = None) -> None:
+def preprocess_papers(progress_callback: Optional[Callable[[int], None]] = None, use_disambiguation: bool = False) -> None:
     """
     Process all papers in the download directory
     
     Args:
         progress_callback: Optional callback for progress
+        use_disambiguation: Whether to use word sense disambiguation (default: False)
     """
     try:
         processor = PDFDocumentProcessor(
             src_folder="./data/pdf_downloads",
             dst_folder="./data/txt",
-            use_disambiguation=True
+            use_disambiguation=use_disambiguation
         )
         
         processed_docs = processor.process_documents(progress_callback=progress_callback)
