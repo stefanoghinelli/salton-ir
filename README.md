@@ -75,7 +75,8 @@ salton benchmark
 2. `preprocess`: preprocesses downloaded papers
    - Extracts text from PDFs
    - Performs tokenization and lemmatization
-   - Applies word sense disambiguation (optional)
+   - Applies word sense disambiguation (if enabled)
+   - `--wsd`: Enable word sense disambiguation (off by default)
 
 3. `index`: builds the search index
 
@@ -88,6 +89,9 @@ salton benchmark
 6. `benchmark`: runs benchmarks (experimental feature)
    - `--save/--no-save`: save results to file (default: save)
    - `--detailed/--simple`: show detailed results (default: simple)
+
+> [!WARNING]
+> The word sense disambiguation computes similarity between word senses and compares each term against multiple context. This quadratic operation can be highly time consuming.
 
 ## Evaluation
 
